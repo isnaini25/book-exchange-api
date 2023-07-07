@@ -1,0 +1,49 @@
+openapi: '3.0.2'
+info:
+  title: Book Exchange
+  version: '1.0'
+servers:
+  - url: http://localhost:5050
+
+paths:
+  /signup:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                city:
+                  type: string
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        '200':
+          description: OK
+
+  /login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: OK
