@@ -78,8 +78,59 @@ const tradeSchema = new mongoose.Schema(
 
 const Trade = mongoose.model('Trade', tradeSchema);
 
+const notificationSchema = new mongoose.Schema(
+  {
+    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    title: String,
+    text: String,
+    created_at: Date,
+    data: Object,
+    read: { type: Boolean, default: false },
+  },
+  { versionKey: false }
+);
+
+const Notification = mongoose.model('Notification', notificationSchema);
+
+const chatSchema = new mongoose.Schema(
+  {
+    _id: mongoose.Schema.Types.ObjectId,
+    members: Array,
+    last_message: String,
+    sender: String,
+    read: { type: Boolean, default: false },
+    timestamp: Date,
+    unread_message: Object,
+  },
+  { versionKey: false }
+);
+
+const Chat = mongoose.model('Chat', chatSchema);
+
+const messageSchema = new mongoose.Schema(
+  {
+    chat_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
+    messages: [
+      {
+        sender: String,
+        message: String,
+        timestamp: Date,
+        attachment: Object,
+        read: { type: Boolean, default: false },
+      },
+    ],
+  },
+  { versionKey: false }
+);
+
+const Message = mongoose.model('Message', messageSchema);
+
 module.exports = {
   User,
   Book,
   Trade,
+  Notification,
+  Chat,
+  Message,
 };

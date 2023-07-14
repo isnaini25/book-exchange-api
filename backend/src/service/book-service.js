@@ -1,4 +1,4 @@
-const { Book } = require('../src/database');
+const { Book } = require('../database');
 
 const addMyBook = (userId, payload, done) => {
   const newBook = new Book({

@@ -1,4 +1,4 @@
-const { User, Book } = require('../src/database');
+const { User, Book } = require('../database');
 
 const getAllUsers = (done) => {
   User.find({}).exec((err, users) => {

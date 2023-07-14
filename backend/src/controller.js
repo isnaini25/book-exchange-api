@@ -1,9 +1,10 @@
-const userService = require('../service/user-service');
-const authService = require('../service/auth-service');
-const bookService = require('../service/book-service');
-const requestsService = require('../service/request-service');
-const service = require('../service/service');
-
+const userService = require('./service/user-service');
+const authService = require('./service/auth-service');
+const bookService = require('./service/book-service');
+const requestsService = require('./service/request-service');
+const pusherService = require('./service/pusher-service');
+const service = require('./service/other-service');
+const chatService = require('./service/chat-service');
 const error = (res, err, code) => {
   res.status(code).json({ error: err }).end();
 };
@@ -40,6 +41,7 @@ const userSignUp = (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    // onlineUsers.push({ ...done });
     return success(res, done);
   });
 };
@@ -50,10 +52,6 @@ const userLogIn = (req, res) => {
       return error(res, err, err.status || 400);
     }
 
-    // res.cookie('logged_in', 1, {
-    //   maxAge: 24 * 60 * 60 * 1000,
-    //   secure: true,
-    // });
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
@@ -135,6 +133,7 @@ const getAllBooks = (req, res) => {
 const createRequest = (req, res) => {
   requestsService.createRequest(req.body, (err, done) => {
     if (err) return error(res, err, err.status || 400);
+
     return success(res, done);
   });
 };
@@ -146,15 +145,21 @@ const getAllRequests = (req, res) => {
   });
 };
 
-const getMyRequest = (req, res) => {
-  requestsService.getMyRequest(req.params.userId, (err, done) => {
+const getMyRequests = (req, res) => {
+  requestsService.getMyRequests(req.params.userId, (err, done) => {
     if (err) return error(res, err, err.status || 400);
     return success(res, done);
   });
 };
 
-const getIncomingRequest = (req, res) => {
-  requestsService.getIncomingRequest(req.params.userId, (err, done) => {
+const getIncomingRequests = (req, res) => {
+  requestsService.getIncomingRequests(req.params.userId, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+    return success(res, done);
+  });
+};
+const getRequest = (req, res) => {
+  requestsService.getRequest(req.params.exchangeId, (err, done) => {
     if (err) return error(res, err, err.status || 400);
     return success(res, done);
   });
@@ -175,6 +180,7 @@ const updateRequest = (req, res) => {
       req.body,
       (err, done) => {
         if (err) return error(res, err, err.status || 400);
+
         return success(res, done);
       }
     );
@@ -200,6 +206,59 @@ const getAmount = (req, res) => {
 const deleteRequest = (req, res) => {
   requestsService.deleteRequest(req.params.exchangeId, (err, done) => {
     if (err) return error(res, err, err.status || 400);
+    // res.io.sockets.emit('set_delete_requests', done);
+    return success(res, done);
+  });
+};
+
+const pusherAuthenticateUser = (req, res) => {
+  pusherService.authenticateUser(req.body, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+
+    return success(res, done);
+  });
+};
+
+const getNotifications = (req, res) => {
+  service.getNotifications(req.params.userId, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+
+    return success(res, done);
+  });
+};
+
+const readNotifications = (req, res) => {
+  service.readNotifications(req.params.userId, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+
+    return success(res, done);
+  });
+};
+
+const sendMessage = (req, res) => {
+  chatService.sendMessage(req.body, (err, done) => {
+    if (err) return error(res, err, 400);
+
+    return success(res, done);
+  });
+};
+
+const getChats = (req, res) => {
+  if (req.query.username) {
+    chatService.getChats(req.query.username, (err, done) => {
+      if (err) return error(res, err, 400);
+
+      return success(res, done);
+    });
+  } else {
+    return error(res, { message: 'Query not found' }, 400);
+  }
+};
+
+const readChats = (req, res) => {
+  chatService.readChats(req.body.reader, req.body.peer, (err, done) => {
+    if (err) return error(res, err, 400);
+
     return success(res, done);
   });
 };
@@ -218,8 +277,15 @@ module.exports = {
   updateRequest,
   userLogOut,
   refreshToken,
-  getMyRequest,
-  getIncomingRequest,
+  getMyRequests,
+  getIncomingRequests,
+  getRequest,
   getAmount,
   deleteRequest,
+  pusherAuthenticateUser,
+  getNotifications,
+  readNotifications,
+  sendMessage,
+  getChats,
+  readChats,
 };
