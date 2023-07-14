@@ -1,4 +1,4 @@
-const { Book } = require('../database');
+import { Book } from '../database.js';
 
 const addMyBook = (userId, payload, done) => {
   const newBook = new Book({
@@ -73,7 +73,7 @@ const getAllBooks = (done) => {
     });
 };
 
-module.exports = {
+export default {
   addMyBook,
   deleteMyBook,
   updateMyBook,

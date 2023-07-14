@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import env from 'dotenv';
+env.config();
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -126,11 +128,4 @@ const messageSchema = new mongoose.Schema(
 
 const Message = mongoose.model('Message', messageSchema);
 
-module.exports = {
-  User,
-  Book,
-  Trade,
-  Notification,
-  Chat,
-  Message,
-};
+export { User, Book, Trade, Notification, Chat, Message };

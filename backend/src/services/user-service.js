@@ -1,4 +1,4 @@
-const { User, Book } = require('../database');
+import { User, Book } from '../database.js';
 
 const getAllUsers = (done) => {
   User.find({}).exec((err, users) => {
@@ -35,6 +35,6 @@ const getAllUsers = (done) => {
   });
 };
 
-module.exports = {
+export default {
   getAllUsers,
 };

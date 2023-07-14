@@ -1,5 +1,5 @@
-const { success, error } = require('./response');
-const authService = require('./service/auth-service');
+import { success, error } from './response.js';
+import authService from '../services/auth-service.js';
 
 const userSignUp = (req, res) => {
   authService.userSignUp(req.body, (err, done) => {
@@ -56,3 +56,12 @@ const userLogOut = (req, res) => {
     return success(res, done);
   });
 };
+
+const refreshToken = (req, res) => {
+  authService.refreshToken(req.cookies.refresh_token, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+    return success(res, done);
+  });
+};
+
+export default { userLogIn, userSignUp, userLogOut, refreshToken };

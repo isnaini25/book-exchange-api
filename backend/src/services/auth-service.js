@@ -1,8 +1,8 @@
-const { User } = require('../database');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-require('dotenv').config();
+import { User } from '../database.js';
+import { hash as _hash, compare } from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import env from 'dotenv';
+env.config();
 
 const userSignUp = (payload, done) => {
   const { fullname, username, city, email, password, confirmPassword } =
@@ -63,7 +63,7 @@ const userSignUp = (payload, done) => {
     return done({ status: 422, message: errorMessage }, null);
   }
 
-  bcrypt.hash(password, 10, async (err, hash) => {
+  _hash(password, 10, async (err, hash) => {
     if (err) return done(err, null);
 
     const newUser = new User({
@@ -126,7 +126,7 @@ const userLogIn = (payload, done) => {
       if (err) return done(err, null);
 
       if (userFound.length > 0) {
-        const match = await bcrypt.compare(password, userFound[0].password);
+        const match = await compare(password, userFound[0].password);
         if (!match)
           return done(
             { status: 400, message: { password: 'Wrong password!' } },
@@ -201,7 +201,7 @@ const refreshToken = async (refreshToken, done) => {
   }
 };
 
-module.exports = {
+export default {
   userSignUp,
   userLogIn,
   userLogOut,

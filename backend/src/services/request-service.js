@@ -1,6 +1,6 @@
-const { Book, Trade, Notification, User } = require('../database');
-const mongoose = require('mongoose');
-const pusher = require('../pusher');
+import { Book, Trade, Notification, User } from '../database.js';
+import { Types } from 'mongoose';
+import pusher from '../pusher.js';
 
 const createRequest = async (payload, done) => {
   const tradeFound = await Trade.find({
@@ -11,7 +11,7 @@ const createRequest = async (payload, done) => {
 
   if (tradeFound.length < 1) {
     const newTrade = new Trade({
-      _id: new mongoose.Types.ObjectId(),
+      _id: new Types.ObjectId(),
       requester_id: payload.requester_id,
       owner_id: payload.owner_id,
       book_given: payload.book_given,
@@ -253,7 +253,7 @@ const deleteRequest = (exchangeId, done) => {
   });
 };
 
-module.exports = {
+export default {
   createRequest,
   getAllRequests,
   getMyRequests,

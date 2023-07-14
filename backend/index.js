@@ -1,12 +1,15 @@
-const express = require('express');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import swaggerDocs from './swagger.js';
+import cors from 'cors';
+import env from 'dotenv';
+import requestRouter from './src/routes/request-routes.js';
+import bookRouter from './src/routes/book-routes.js';
+import authRouter from './src/routes/auth-routes.js';
+import router from './src/routes/index.js';
 const app = express();
-const cors = require('cors');
-require('dotenv').config();
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const controller = require('./src/controller');
-const { swaggerDocs } = require('./swagger');
-const { verifyToken } = require('./src/middleware/verifyToken');
+env.config();
 
 app.use(cors({ origin: true, credentials: true }));
 
@@ -25,53 +28,11 @@ app.get('/', (req, res) => {
   return res.json({ message: 'home' });
 });
 
-// app.post('/pusher/user-auth', controller.pusherAuthenticateUser);
-app.get('/token', controller.refreshToken);
+app.use(router);
+app.use(authRouter);
+app.use(bookRouter);
+app.use(requestRouter);
 
-app.post('/signup', controller.userSignUp);
-
-app.post('/login', controller.userLogIn);
-app.delete('/logout', controller.userLogOut);
-
-app.get('/users', controller.getAllUsers);
-
-app
-  .route('/books/my/:userId')
-  .get(controller.getMyBooks)
-  .post(verifyToken, controller.addMyBook);
-
-app
-  .route('/books/my/:userId/:bookId')
-  .delete(verifyToken, controller.deleteMyBook)
-  .patch(verifyToken, controller.updateMyBook);
-
-app.get('/books', controller.getAllBooks);
-app.get('/books/:bookId', controller.getBook);
-
-app.get('/requests', controller.getAllRequests);
-app.route('/requests/new').post(verifyToken, controller.createRequest);
-app
-  .route('/requests/:exchangeId')
-  .get(verifyToken, controller.getRequest)
-  .post(verifyToken, controller.updateRequest)
-  .delete(verifyToken, controller.deleteRequest);
-
-app.route('/requests/my/:userId').get(verifyToken, controller.getMyRequests);
-//   .post(controller.updateMyRequest);
-
-app
-  .route('/requests/incoming/:userId')
-  .get(verifyToken, controller.getIncomingRequests);
-
-app.get('/amount', controller.getAmount);
-
-app
-  .route('/notifications/:userId')
-  .get(verifyToken, controller.getNotifications)
-  .post(verifyToken, controller.readNotifications);
-
-app.route('/chats').post(controller.sendMessage).patch(controller.readChats);
-app.get('/chats?', controller.getChats);
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server running on port : ' + process.env.PORT);
   console.log(swaggerDocs(app, process.env.HOST));

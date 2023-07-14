@@ -1,5 +1,5 @@
-const pusher = require('../pusher');
-const onlineUsers = require('../online-users');
+import { authorizeChannel } from '../pusher';
+import { push } from '../online-users';
 const authenticateUser = (payload, done) => {
   const { socket_id, user_id, username, channel_name } = payload;
 
@@ -15,13 +15,13 @@ const authenticateUser = (payload, done) => {
   //   done(null, authResponse);
   // }
   if (channel_name) {
-    const authResponse = pusher.authorizeChannel(socket_id, channel_name, user);
-    onlineUsers.push({ [channel_name]: 'online' });
+    const authResponse = authorizeChannel(socket_id, channel_name, user);
+    push({ [channel_name]: 'online' });
     done(null, authResponse);
     console.log(authResponse);
   }
 };
 
-module.exports = {
+export default {
   authenticateUser,
 };

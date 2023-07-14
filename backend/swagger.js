@@ -1,6 +1,8 @@
 // const swaggerJSDoc = require('swagger-jsdoc');
-const YAML = require('yamljs');
-const swaggerUi = require('swagger-ui-express');
+// const YAML = require('yamljs');
+// const swaggerUi = require('swagger-ui-express');
+import YAML from 'yamljs';
+import swaggerUi from 'swagger-ui-express';
 const swaggerDocument = YAML.load('./docAPI.yml');
 
 // Function to setup our docs
@@ -15,4 +17,4 @@ const swaggerDocs = (app, host) => {
   return `Docs are available on ${host}/api/docs`;
 };
 
-module.exports = { swaggerDocs };
+export default swaggerDocs;

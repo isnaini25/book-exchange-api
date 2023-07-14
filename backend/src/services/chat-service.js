@@ -1,6 +1,6 @@
-const { default: mongoose } = require('mongoose');
-const { Chat, Message } = require('../database');
-const pusher = require('../pusher');
+import { default as mongoose } from 'mongoose';
+import { Chat, Message } from '../database.js';
+import pusher from '../pusher.js';
 
 const sendMessage = async (payload, done) => {
   const chatId = new mongoose.Types.ObjectId();
@@ -104,7 +104,7 @@ const readChats = async (reader, peer, done) => {
   done(null, messages);
 };
 
-module.exports = {
+export default {
   sendMessage,
   getChats,
   readChats,
