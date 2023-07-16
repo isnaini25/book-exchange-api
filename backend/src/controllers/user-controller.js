@@ -8,4 +8,17 @@ const getAllUsers = (req, res) => {
   });
 };
 
-export default { getAllUsers };
+const getMyProfile = (req, res) => {
+  userService.getMyProfile(req.params.userId, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+    return success(res, done);
+  });
+};
+
+const updateMyProfile = (req, res) => {
+  userService.updateMyProfile(req.params.userId, req.body, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+    return success(res, done);
+  });
+};
+export default { getAllUsers, getMyProfile, updateMyProfile };

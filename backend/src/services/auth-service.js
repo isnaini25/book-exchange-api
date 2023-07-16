@@ -1,22 +1,31 @@
 import { User } from '../database.js';
-import { hash as _hash, compare } from 'bcrypt';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import env from 'dotenv';
 env.config();
 
+export const isEmpty = (string, field) => {
+  if (string === undefined) {
+    return 'Missing ' + field;
+  }
+
+  if (string.trim() === '') {
+    return field + ' should not be empty!';
+  }
+  return false;
+};
+
+export const emailValidation = (email) => {
+  const regExp = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
+  if (!email.match(regExp)) {
+    return 'You have entered an invalid email address!';
+  }
+  return false;
+};
+
 const userSignUp = (payload, done) => {
   const { fullname, username, city, email, password, confirmPassword } =
     payload;
-
-  const isEmpty = (string, field) => {
-    if (string === undefined) {
-      return 'Missing ' + field;
-    }
-    if (string.trim() === '') {
-      return field + ' should not be empty!';
-    }
-    return false;
-  };
 
   const passwordValidation = () => {
     if (password.length < 5) {
@@ -27,20 +36,10 @@ const userSignUp = (payload, done) => {
     }
     return false;
   };
-
-  const emailValidation = () => {
-    const regExp = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
-    if (!email.match(regExp)) {
-      console.log('email invalid');
-      return 'You have entered an invalid email address!';
-    }
-    return false;
-  };
-
   const fullnameIsInvalid = isEmpty(fullname, 'fullname');
   const usernameIsInvalid = isEmpty(username, 'username');
   const cityIsInvalid = isEmpty(city, 'city');
-  const emailIsInvalid = isEmpty(email, 'email') || emailValidation();
+  const emailIsInvalid = isEmpty(email, 'email') || emailValidation(email);
   const passwordIsInvalid =
     isEmpty(password, 'password') || passwordValidation();
 
@@ -63,7 +62,7 @@ const userSignUp = (payload, done) => {
     return done({ status: 422, message: errorMessage }, null);
   }
 
-  _hash(password, 10, async (err, hash) => {
+  bcrypt.hash(password, 10, async (err, hash) => {
     if (err) return done(err, null);
 
     const newUser = new User({
@@ -90,7 +89,13 @@ const userSignUp = (payload, done) => {
 
       await User.findByIdAndUpdate(_id, { refresh_token: refreshToken });
 
-      done(null, { id: _id, username, accessToken, refreshToken });
+      done(null, {
+        id: _id,
+        username,
+        accessToken,
+        refreshToken,
+        avatar: 'default',
+      });
     });
   });
 };
@@ -99,15 +104,6 @@ const userSignUp = (payload, done) => {
 const userLogIn = (payload, done) => {
   const { password, username } = payload;
 
-  const isEmpty = (string, field) => {
-    if (string === undefined) {
-      return 'Missing ' + field;
-    }
-    if (string.trim() === '') {
-      return field + ' should not be empty!';
-    }
-    return false;
-  };
   const passwordIsEmpty = isEmpty(password, 'password');
   const usernameIsEmpty = isEmpty(username, 'username');
 
@@ -126,7 +122,7 @@ const userLogIn = (payload, done) => {
       if (err) return done(err, null);
 
       if (userFound.length > 0) {
-        const match = await compare(password, userFound[0].password);
+        const match = await bcrypt.compare(password, userFound[0].password);
         if (!match)
           return done(
             { status: 400, message: { password: 'Wrong password!' } },
@@ -148,7 +144,13 @@ const userLogIn = (payload, done) => {
 
         await User.findByIdAndUpdate(_id, { refresh_token: refreshToken });
 
-        done(null, { id: _id, username, accessToken, refreshToken });
+        done(null, {
+          id: _id,
+          username,
+          accessToken,
+          refreshToken,
+          avatar: userFound[0].avatar,
+        });
       } else {
         return done(
           { status: 401, message: { username: 'Username not found' } },

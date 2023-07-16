@@ -25,7 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // });
 
 app.get('/', (req, res) => {
-  return res.json({ message: 'home' });
+  return res.send(
+    'Docs are available on <a href="' + process.env.HOST + '/api/docs">here</a>'
+  );
 });
 
 app.use(router);

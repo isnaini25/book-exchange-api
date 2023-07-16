@@ -43,7 +43,7 @@ const userLogIn = (req, res) => {
 
     return success(res, {
       message: 'Login success!',
-      accessToken: done.accessToken,
+      ...done,
     });
   });
 };

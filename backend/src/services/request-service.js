@@ -1,16 +1,16 @@
-import { Book, Trade, Notification, User } from '../database.js';
+import { Book, Exchange, Notification, User } from '../database.js';
 import { Types } from 'mongoose';
 import pusher from '../pusher.js';
 
 const createRequest = async (payload, done) => {
-  const tradeFound = await Trade.find({
+  const tradeFound = await Exchange.find({
     requester_id: payload.requester_id,
     book_taken: payload.book_taken,
     status: { $ne: 'Canceled' },
   }).lean();
 
   if (tradeFound.length < 1) {
-    const newTrade = new Trade({
+    const newExchange = new Exchange({
       _id: new Types.ObjectId(),
       requester_id: payload.requester_id,
       owner_id: payload.owner_id,
@@ -21,12 +21,12 @@ const createRequest = async (payload, done) => {
       updated_at: payload.created_at,
     });
 
-    newTrade.save(async (err, data) => {
+    newExchange.save(async (err, data) => {
       if (err) return done(err, null);
 
       const bookFound = await Book.findById(payload.book_taken);
       const requester = await User.findById(payload.requester_id).lean();
-      bookFound.requests.push(newTrade._id);
+      bookFound.requests.push(newExchange._id);
       bookFound.save();
 
       const notifications = {
@@ -34,7 +34,7 @@ const createRequest = async (payload, done) => {
         receiver: payload.owner_id,
         title: 'New Exchange Request',
         text: requester.username + ' want to exchange ' + bookFound.title,
-        data: { exchange_id: newTrade._id },
+        data: { exchange_id: newExchange._id },
         created_at: payload.created_at,
       };
       new Notification(notifications).save();
@@ -51,8 +51,12 @@ const createRequest = async (payload, done) => {
   }
 };
 
-const getAllRequests = (done) => {
-  Trade.find({ status: 'Waiting for approval' })
+const getAllRequests = (type, done) => {
+  let query = { status: 'Waiting for approval' };
+  if (type === 'exchange') {
+    query = { status: { $in: ['Exchanging', 'Completed'] } };
+  }
+  Exchange.find(query)
     .lean()
     .populate('requester_id', 'username  -_id')
     .populate({
@@ -71,7 +75,28 @@ const getAllRequests = (done) => {
 };
 
 const getMyRequests = (userId, done) => {
-  Trade.find({ requester_id: userId })
+  Exchange.find({ requester_id: userId })
+    .lean()
+    .populate({
+      path: 'book_given',
+      populate: { path: 'owner', select: 'username -_id' },
+    })
+    .populate({
+      path: 'book_taken',
+      populate: { path: 'owner', select: 'username -_id' },
+    })
+    .sort({ updated_at: 'desc' })
+    .exec((err, requests) => {
+      if (err) return done(err, null);
+      done(null, requests);
+    });
+};
+
+const getMyExchanges = (userId, done) => {
+  Exchange.find({
+    status: 'Exchanging',
+    $or: [{ owner_id: userId }, { requester_id: userId }],
+  })
     .lean()
     .populate({
       path: 'book_given',
@@ -89,7 +114,7 @@ const getMyRequests = (userId, done) => {
 };
 
 const getIncomingRequests = (userId, done) => {
-  Trade.find({ owner_id: userId })
+  Exchange.find({ owner_id: userId })
     .lean()
     .populate({
       path: 'book_given',
@@ -107,7 +132,7 @@ const getIncomingRequests = (userId, done) => {
     });
 };
 const getRequest = (exchangeId, done) => {
-  Trade.findById(exchangeId)
+  Exchange.findById(exchangeId)
     .lean()
     .populate({
       path: 'book_given',
@@ -152,7 +177,7 @@ const updateRequest = async (exchangeId, payload, done) => {
     updateData.owner_status = 'Completed';
   }
 
-  const trade = await Trade.findById(exchangeId)
+  const trade = await Exchange.findById(exchangeId)
     .populate('owner_id')
     .populate('requester_id')
     .lean();
@@ -185,7 +210,7 @@ const updateRequest = async (exchangeId, payload, done) => {
     }
   }
 
-  Trade.findByIdAndUpdate(exchangeId, updateData, { new: true }).exec(
+  Exchange.findByIdAndUpdate(exchangeId, updateData, { new: true }).exec(
     (err, tradeUpdated) => {
       if (err) return done(err, null);
       let notifications = {
@@ -238,7 +263,7 @@ const updateRequest = async (exchangeId, payload, done) => {
 };
 
 const deleteRequest = (exchangeId, done) => {
-  Trade.findByIdAndDelete(exchangeId, async (err, deleted) => {
+  Exchange.findByIdAndDelete(exchangeId, async (err, deleted) => {
     if (err) return done(err, null);
 
     Book.updateOne(
@@ -261,4 +286,5 @@ export default {
   deleteRequest,
   getIncomingRequests,
   getRequest,
+  getMyExchanges,
 };

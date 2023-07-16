@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    avatar: { type: String, default: 'default' },
     refresh_token: String,
   },
   { versionKey: false }
@@ -51,7 +52,7 @@ const bookSchema = new mongoose.Schema(
     requests: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Trade',
+        ref: 'Exchange',
       },
     ],
     status: String,
@@ -61,8 +62,8 @@ const bookSchema = new mongoose.Schema(
 
 const Book = mongoose.model('Book', bookSchema);
 
-//Trade
-const tradeSchema = new mongoose.Schema(
+//Exchange
+const exchangeSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
     requester_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -78,7 +79,7 @@ const tradeSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-const Trade = mongoose.model('Trade', tradeSchema);
+const Exchange = mongoose.model('Exchange', exchangeSchema);
 
 const notificationSchema = new mongoose.Schema(
   {
@@ -128,4 +129,4 @@ const messageSchema = new mongoose.Schema(
 
 const Message = mongoose.model('Message', messageSchema);
 
-export { User, Book, Trade, Notification, Chat, Message };
+export { User, Book, Exchange, Notification, Chat, Message };

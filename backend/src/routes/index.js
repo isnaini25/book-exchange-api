@@ -7,6 +7,11 @@ import chatController from '../controllers/chat-controller.js';
 import verifyToken from '../middleware/verify-token.js';
 
 router.get('/users', userController.getAllUsers);
+router
+  .route('/users/:userId')
+  .get(userController.getMyProfile)
+  .patch(userController.updateMyProfile);
+
 router.get('/amount', otherController.getAmount);
 
 router

@@ -10,7 +10,7 @@ const createRequest = (req, res) => {
 };
 
 const getAllRequests = (req, res) => {
-  requestService.getAllRequests((err, done) => {
+  requestService.getAllRequests(req.query.type, (err, done) => {
     if (err) return error(res, err, err.status || 400);
     return success(res, done);
   });
@@ -19,6 +19,13 @@ const getAllRequests = (req, res) => {
 const getMyRequests = (req, res) => {
   requestService.getMyRequests(req.params.userId, (err, done) => {
     if (err) return error(res, err, err.status || 400);
+    return success(res, done);
+  });
+};
+const getMyExchanges = (req, res) => {
+  requestService.getMyExchanges(req.params.userId, (err, done) => {
+    if (err) return error(res, err, err.status || 400);
+
     return success(res, done);
   });
 };
@@ -73,6 +80,7 @@ export default {
   getAllRequests,
   getIncomingRequests,
   getMyRequests,
+  getMyExchanges,
   getRequest,
   deleteRequest,
   updateRequest,
