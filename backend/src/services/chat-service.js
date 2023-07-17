@@ -38,7 +38,7 @@ const sendMessage = async (payload, done) => {
   if (chatFound) {
     const path = 'unread_message.' + receiver;
     Chat.updateOne(
-      { chat_id: chatFound._id },
+      { _id: chatFound._id },
       { ...newChat, $inc: { [path]: isOnline ? 0 : 1 } }
     ).exec();
 
@@ -90,17 +90,21 @@ const readChats = async (reader, peer, done) => {
   const path = 'unread_message.' + reader;
   const chats = await Chat.findOne({ members: { $all: [reader, peer] } });
 
-  const messages = await Message.findOne({
-    chat_id: chats._id,
-  });
+  let messages = {};
+  if (chats) {
+    messages = await Message.findOne({
+      chat_id: chats._id,
+    });
 
-  if (chats[path] !== 0) {
-    chats.updateOne({ read: true, [path]: 0 }).exec();
-    messages.messages = messages.messages.map((msg) =>
-      msg.sender === peer ? { ...msg, read: true } : msg
-    );
-    messages.save();
+    if (chats[path] !== 0) {
+      chats.updateOne({ read: true, [path]: 0 }).exec();
+      messages.messages = messages.messages.map((msg) =>
+        msg.sender === peer ? { ...msg, read: true } : msg
+      );
+      messages.save();
+    }
   }
+
   done(null, messages);
 };
 

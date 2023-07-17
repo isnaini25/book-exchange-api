@@ -27,6 +27,7 @@ const getAllUsers = (done) => {
               username: user.username,
               city: user.city,
               books: booksFound,
+              avatar: user.avatar,
               incoming_requests: req.length,
             });
           });

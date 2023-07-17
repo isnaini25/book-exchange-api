@@ -186,21 +186,25 @@ const updateRequest = async (exchangeId, payload, done) => {
   const requesterStatusStored = trade.requester_status;
 
   if (ownerStatusStored || requesterStatusStored) {
-    let exchangingCondition = ownerStatusStored
-      ? ownerStatusStored === 'Exchanging' &&
-        updateData.requester_status === 'Exchanging'
-      : requesterStatusStored
-      ? requesterStatusStored === 'Exchanging' &&
-        updateData.owner_status === 'Exchanging'
-      : null;
+    let exchangingCondition = false;
+    let completedCondition = false;
 
-    let completedCondition = ownerStatusStored
-      ? ownerStatusStored === 'Completed' &&
-        updateData.requester_status === 'Completed'
-      : requesterStatusStored
-      ? requesterStatusStored === 'Completed' &&
-        updateData.owner_status === 'Completed'
-      : null;
+    if (
+      (requesterStatusStored === 'Exchanging' &&
+        updateData.owner_status === 'Exchanging') ||
+      (ownerStatusStored === 'Exchanging' &&
+        updateData.requester_status === 'Exchanging')
+    ) {
+      exchangingCondition = true;
+    }
+    if (
+      (ownerStatusStored === 'Completed' &&
+        updateData.requester_status === 'Completed') ||
+      (requesterStatusStored === 'Completed' &&
+        updateData.owner_status === 'Completed')
+    ) {
+      completedCondition = true;
+    }
 
     if (exchangingCondition) {
       updateData.status = 'Exchanging';
