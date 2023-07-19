@@ -11,7 +11,7 @@ import router from './src/routes/index.js';
 const app = express();
 env.config();
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: '*', credentials: true }));
 
 app.use(cookieParser());
 app.use(express.json());
