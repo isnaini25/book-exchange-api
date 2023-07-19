@@ -24,6 +24,7 @@ const userSignUp = (req, res) => {
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'none',
     });
 
     return success(res, done);
@@ -39,6 +40,7 @@ const userLogIn = (req, res) => {
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'none',
     });
 
     return success(res, {
