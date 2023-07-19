@@ -11,7 +11,12 @@ import router from './src/routes/index.js';
 const app = express();
 env.config();
 
-app.use(cors({ origin: 'http://localhost', credentials: true }));
+app.use(
+  cors({
+    origin: 'https://book-exchange-cheona.vercel.app/',
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
