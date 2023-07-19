@@ -11,12 +11,13 @@ import router from './src/routes/index.js';
 const app = express();
 env.config();
 
+const allowedOrigins = [
+  'https://book-exchange-cheona.vercel.app',
+  'http://localhost:5173',
+];
 app.use(
   cors({
-    origin: [
-      'https://book-exchange-cheona.vercel.app/',
-      'http://localhost:5173',
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -26,10 +27,10 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', [
-    'https://book-exchange-cheona.vercel.app/',
-    'http://localhost:5173',
-  ]);
+  let origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   next();
