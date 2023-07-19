@@ -13,7 +13,7 @@ env.config();
 
 app.use(
   cors({
-    origin: 'https://book-exchange-cheona.vercel.app/',
+    origin: 'http://book-exchange-cheona.vercel.app/',
     credentials: true,
   })
 );
