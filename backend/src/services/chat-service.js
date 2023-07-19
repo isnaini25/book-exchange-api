@@ -79,9 +79,12 @@ const sendMessage = async (payload, done) => {
 };
 
 const getChats = async (username, done) => {
-  const chats = await Chat.find({ members: username }).lean();
+  const chats = await Chat.find({ members: username })
+    .sort({ timestamp: 'descending' })
+    .lean();
 
-  const unreadMessage = chats.map((chat) => chat.unread_message[username]);
+  let unreadMessage = 0;
+  chats.forEach((chat) => (unreadMessage += chat.unread_message[username]));
 
   done(null, { chats, unread_message: unreadMessage });
 };
