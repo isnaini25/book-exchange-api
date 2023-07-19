@@ -24,7 +24,8 @@ const userSignUp = (req, res) => {
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'Lax',
+      sameSite: 'none',
+      secure: true,
       path: '/',
     });
 
@@ -42,7 +43,8 @@ const userLogIn = (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       path: '/',
-      sameSite: 'Lax',
+      sameSite: 'none',
+      secure: true,
     });
 
     return success(res, {

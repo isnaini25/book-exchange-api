@@ -18,6 +18,7 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: allowedOrigins,
+    preflightContinue: true,
     credentials: true,
   })
 );
