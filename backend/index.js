@@ -13,7 +13,7 @@ env.config();
 
 app.use(
   cors({
-    origin: 'http://book-exchange-cheona.vercel.app/',
+    origin: 'https://book-exchange-cheona.vercel.app/',
     credentials: true,
   })
 );
@@ -22,12 +22,15 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-//   next();
-// });
+app.use((req, res, next) => {
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    'https://book-exchange-cheona.vercel.app/'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  next();
+});
 
 app.get('/', (req, res) => {
   return res.send(
