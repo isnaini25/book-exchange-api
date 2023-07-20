@@ -24,7 +24,8 @@ const userSignUp = (req, res) => {
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'none',
+      sameSite: 'Lax',
+      domain: 'vercel.app',
       secure: true,
       path: '/',
     });
@@ -43,7 +44,8 @@ const userLogIn = (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       path: '/',
-      sameSite: 'none',
+      domain: 'vercel.app',
+      sameSite: 'Lax',
       secure: true,
     });
 
