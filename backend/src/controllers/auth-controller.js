@@ -26,8 +26,6 @@ const userSignUp = (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: 'Lax',
       domain: 'book-exchange-cheona.vercel.app',
-      secure: true,
-      path: '/',
     });
 
     return success(res, done);
@@ -43,10 +41,8 @@ const userLogIn = (req, res) => {
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      path: '/',
       domain: 'book-exchange-cheona.vercel.app',
       sameSite: 'Lax',
-      secure: true,
     });
 
     return success(res, {
