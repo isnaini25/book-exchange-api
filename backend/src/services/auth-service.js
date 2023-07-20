@@ -177,7 +177,7 @@ const refreshToken = async (refreshToken, done) => {
     if (!refreshToken)
       return done({ status: 401, message: 'Missing refresh token ' }, null);
     const user = await User.findOne({ refresh_token: refreshToken });
-
+    console.log(user);
     if (!user) return done({ status: 401, message: 'Auth is invalid' }, null);
 
     jwt.verify(
