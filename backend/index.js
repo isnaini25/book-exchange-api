@@ -15,6 +15,7 @@ const allowedOrigins = [
   'https://book-exchange-cheona.vercel.app',
   'http://localhost:5173',
 ];
+app.set('trust proxy', 1);
 app.use(
   cors({
     origin: allowedOrigins,
