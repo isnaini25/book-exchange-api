@@ -24,7 +24,7 @@ const userSignUp = (req, res) => {
     res.cookie('refresh_token', done.refreshToken, {
       secure: true,
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 7 * 24 * 60 * 60 * 1000,
       sameSite: 'none',
       domain: 'book-exchange-api.cyclic.app',
     });
@@ -41,7 +41,7 @@ const userLogIn = (req, res) => {
 
     res.cookie('refresh_token', done.refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 7 * 24 * 60 * 60 * 1000,
       secure: true,
       sameSite: 'none',
       domain: 'book-exchange-api.cyclic.app',

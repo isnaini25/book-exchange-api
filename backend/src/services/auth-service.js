@@ -79,12 +79,12 @@ const userSignUp = (payload, done) => {
       const accessToken = jwt.sign(
         { _id, username, email },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '15s' }
+        { expiresIn: '1h' }
       );
       const refreshToken = jwt.sign(
         { _id, username, email },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: '1d' }
+        { expiresIn: '30d' }
       );
 
       await User.findByIdAndUpdate(_id, { refresh_token: refreshToken });
@@ -134,12 +134,12 @@ const userLogIn = (payload, done) => {
         const accessToken = jwt.sign(
           { _id, username, email },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: '15s' }
+          { expiresIn: '1h' }
         );
         const refreshToken = jwt.sign(
           { _id, username, email },
           process.env.REFRESH_TOKEN_SECRET,
-          { expiresIn: '1d' }
+          { expiresIn: '30d' }
         );
 
         await User.findByIdAndUpdate(_id, { refresh_token: refreshToken });
@@ -191,7 +191,7 @@ const refreshToken = async (refreshToken, done) => {
           { _id, username, email },
           process.env.ACCESS_TOKEN_SECRET,
           {
-            expiresIn: '15s',
+            expiresIn: '1h',
           }
         );
 
