@@ -64,7 +64,10 @@ const userLogOut = (req, res) => {
 };
 
 const refreshToken = (req, res) => {
-  authService.refreshToken(req.cookies.refresh_token, (err, done) => {
+  const refresh_token = req.cookies.refresh_token
+    ? req.cookies.refresh_token
+    : req.body.refresh_token;
+  authService.refreshToken(refresh_token, (err, done) => {
     if (err) return error(res, err, err.status || 400);
     return success(res, done);
   });

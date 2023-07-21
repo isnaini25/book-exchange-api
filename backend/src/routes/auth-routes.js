@@ -3,7 +3,7 @@ import controller from '../controllers/auth-controller.js';
 
 const authRouter = new Router();
 
-authRouter.get('/token', controller.refreshToken);
+authRouter.post('/token', controller.refreshToken);
 
 authRouter.post('/signup', controller.userSignUp);
 
