@@ -26,6 +26,7 @@ const userSignUp = (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: 'none',
+      domain: 'book-exchange-api.cyclic.app',
     });
 
     return success(res, done);
@@ -43,6 +44,7 @@ const userLogIn = (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
       sameSite: 'none',
+      domain: 'book-exchange-api.cyclic.app',
     });
 
     return success(res, {
