@@ -25,6 +25,7 @@ const userSignUp = (req, res) => {
       secure: true,
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'none',
     });
 
     return success(res, done);
@@ -41,6 +42,7 @@ const userLogIn = (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
+      sameSite: 'none',
     });
 
     return success(res, {
