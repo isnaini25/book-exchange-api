@@ -12,7 +12,7 @@ const app = express();
 env.config();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
-console.log(allowedOrigins);
+
 app.set('trust proxy', 1);
 app.use(
   cors({
